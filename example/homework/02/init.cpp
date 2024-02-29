@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
+using namespace std;
 
 // Problem: Make an n ∗ m View where each index equals 1000 ∗ i ∗ j
 
@@ -35,11 +36,13 @@ int main(int argc, char* argv[]) {
   // I'm not sure if we are supposed to but it's good for testing
   for (int i = 0; i < n; i++){
     for (int j = 0; j < m; j++){
-      std::cout << std::setw(6) << myView(i, j) << " ";
+      cout << setw(6) << myView(i, j) << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
   }
+  cout << endl;
 
   }
   Kokkos::finalize();
+  return 0;
 }
