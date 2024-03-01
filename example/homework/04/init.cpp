@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
+using namespace std;
 
 // Do simple parallel reduce to output the maximum element in a View
 
@@ -25,18 +26,17 @@ int main(int argc, char* argv[]) {
   });
 
    // Print out the view (for testing purposes)
-   std::cout << "View:" << std::endl;
+   cout << "View:" << endl;
    for (int i = 0; i < n; ++i) {
      for (int j = 0; j < m; ++j) {
-       std::cout << std::setw(3) << myView(i, j) << " ";
+       cout << setw(3) << myView(i, j) << " ";
      }
-     std::cout << "\n";
+     cout << "\n";
    }
 
    // Do a parallel reduction to find the maximum element
    int result = 0;
-   Kokkos::parallel_reduce("parallel max", Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0, 0}, {n, m}),
-     KOKKOS_LAMBDA(const int i, const int j, int& lmax) {
+   Kokkos::parallel_reduce("parallel max", Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0, 0}, {n, m}), KOKKOS_LAMBDA(const int i, const int j, int& lmax) {
        if (myView(i, j) > lmax) {
          lmax = myView(i, j);
         }
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
    Kokkos::fence();
 
    // Print the result
-   std::cout << "\nMax Value: " << result << std::endl << std::endl;
+   cout << "\nMax Value: " << result << endl << endl;
 
   }
   Kokkos::finalize();

@@ -4,67 +4,55 @@
 #include <cstdlib>
 #include <iomanip>
 
-void createAndFindPrefixSum(int rows, int cols);
+void createAndFindPrefixSum(int n);
 
-// Define rows and cols and call createAndFindPrefixSum
+// Define size and call createAndFindPrefixSum
 int main() {
-    Kokkos::initialize();
-    {
-        std::srand(std::time(0));
-        int rows = 3;
-        int cols = 4;
-        createAndFindPrefixSum(rows, cols);
-        createAndFindPrefixSum(rows, cols);
-        createAndFindPrefixSum(rows, cols);
-    }
-    Kokkos::finalize();
+   Kokkos::initialize();
+   {
+   int n = 10;
+
+   std::srand(std::time(0));
+
+   createAndFindPrefixSum(n);
+   createAndFindPrefixSum(n);
+   createAndFindPrefixSum(n);
+    
+   std::cout << "As you can see, the times are not always the same but are each very low\n\n";  
+   }
+
+   Kokkos::finalize();
 }
 
-// Create and fill an original view and find and print its partial sums and time
-void createAndFindPrefixSum(int rows, int cols) {
-    Kokkos::View<int**> original("original", rows, cols);
-    Kokkos::View<int**> partialSums("partial_sums", rows, cols);
-
-    // make original view
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            original(i, j) = rand() % 10; // fill using random number between 0 and 9
-        }
+// Creates a 1d view and outputs its partial sums
+void createAndFindPrefixSum(int n) {
+    Kokkos::View<int*> original("original", n);
+    Kokkos::View<int*> partialSums("partial_sums", n);
+    
+    // Populate view
+    for (int i = 0; i < n; ++i) {
+        original(i) = rand() % 10; // fill using random number between 0 and 9
     }
 
+    // Calculate prefix sum
     Kokkos::Timer timer;
-
-    // find partial sums
-    Kokkos::parallel_for("prefix_sum", rows, KOKKOS_LAMBDA(const int i) {
-        int row_sum = 0;
-        for (int j = 0; j < cols; ++j) {
-            row_sum += original(i, j);
-            partialSums(i, j) = row_sum;
+    Kokkos::parallel_scan("prefix_sum", n, KOKKOS_LAMBDA(const int i, int& update, const bool final) {
+        if (final) {
+            partialSums(i) = update + original(i);
         }
+        update += original(i);
     });
-
     double total_time = timer.seconds();
+    Kokkos::fence();
 
-    // print original
-    std::cout << "Original array:\n";
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            std::cout << std::setw(2) << original(i, j) << " ";
-        }
-        std::cout << "\n";
+    // Output both arrays and elapsed time
+    std::cout << "Original arrray:\n";
+    for (int i = 0; i < n; ++i) {
+        std::cout << std::setw(2) << original(i) << " ";
     }
-
-    // print partial sum
-    std::cout << "\nPartial Sums array:\n";
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            std::cout << std::setw(2) << partialSums(i, j) << " ";
-        }
-        std::cout << "\n";
+    std::cout << "\nPartial Sums:\n";
+    for (int i = 0; i < n; ++i) {
+        std::cout << std::setw(2) << partialSums(i) << " ";
     }
-
-    // print time
     std::cout << "\nElapsed Time: " << total_time << " seconds\n\n";
-    std::cout << "-------------------------------------------------\n\n";
 }
-

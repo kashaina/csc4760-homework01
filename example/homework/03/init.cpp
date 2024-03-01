@@ -1,6 +1,7 @@
 #include <Kokkos_Core.hpp>
 #include <cstdio>
 #include <iostream>
+using namespace std;
 
 // Declare a 5 ∗ 7 ∗ 12 ∗ n View
 
@@ -27,8 +28,8 @@ int main(int argc, char* argv[]) {
     Kokkos::View<double****> myView("myView", a, b, c, n);
 
     // Check dimensions (for testing purposes)
-    std::cout << "\nView Dimensions: " << myView.extent(0) << " x " << myView.extent(1) << " x " << myView.extent(2) << " x " << myView.extent(3) << std::endl;
-    std::cout << "View Size: " << myView.size() << std::endl << std::endl;
+    cout << "\nView Dimensions: " << myView.extent(0) << " x " << myView.extent(1) << " x " << myView.extent(2) << " x " << myView.extent(3) << endl;
+    cout << "View Size: " << myView.size() << endl << endl;
   
   }
   Kokkos::finalize();

@@ -13,17 +13,17 @@ template <typename MatrixViewType, typename VectorViewType, typename ResultViewT
 void matrixMultiplication(const MatrixViewType& matrix, const VectorViewType& vector, ResultViewType& result) {
   
   // Check if each view has the correct number of dimensions
-  // This function works in theory but does not actually
+  // This function works in theory but does not actually due to compiler checks
   if (matrix.rank() != 2) {
-    std::cerr << "\nError: Matrix must be a 2D view." << std::endl;
+    std::cerr << "\nError: Matrix must be a 2D view." << std::endl << std::endl;
     return;
   }
   if (vector.rank() != 1) {
-    std::cerr << "\nError: Vector must be a 1D view." << std::endl;
+    std::cerr << "\nError: Vector must be a 1D view." << std::endl << std::endl;
     return;
   }
   if (result.rank() != 1) {
-    std::cerr << "\nError: Result must be a 1D view." << std::endl;
+    std::cerr << "\nError: Result must be a 1D view." << std::endl << std::endl;
     return;
   }
 
@@ -35,11 +35,11 @@ void matrixMultiplication(const MatrixViewType& matrix, const VectorViewType& ve
   
   // Check if the views' sizes are compatible
   if (matrixCols != vectorSize) {
-    std::cerr << "\nError: Matrix columns (" << matrixCols << ") must be equal to vector size (" << vectorSize << ")." << std::endl;
+    std::cerr << "\nError: Matrix columns (" << matrixCols << ") must be equal to vector size (" << vectorSize << ")." << std::endl << std::endl;
     return;
   }
   if (matrixRows != resultSize) {
-    std::cerr << "\nError: Result matrix dimensions (" << matrixRows << " x 1 are not compatible." << std::endl;
+    std::cerr << "\nError: Result matrix dimensions (" << matrixRows << " x 1 are not compatible." << std::endl << std::endl;
     return;
   }
 
@@ -106,7 +106,6 @@ int main(int argc, char* argv[]) {
   std::cout << "\n\n\nWe are now going to demonstrate that the function requires the correct dimensions/sizes.";
   std::cout << "\nWe are going to attempt to multiply a 3 x 3 matrix with a size 2 vector.";
   matrixMultiplication(matrix, vector2, result);
-  std::cout << std::endl;
   
   }
   Kokkos::finalize();

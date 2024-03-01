@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
     Kokkos::parallel_for("Loop2", myView.extent(1), KOKKOS_LAMBDA (const int j) {
       myView(i, j) = 1000 * i * j;
     });
-  }); 
+  });
+  Kokkos::fence(); 
   
   // Print view
   // I'm not sure if we are supposed to but it's good for testing
@@ -44,5 +45,4 @@ int main(int argc, char* argv[]) {
 
   }
   Kokkos::finalize();
-  return 0;
 }

@@ -4,20 +4,15 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+using namespace std;
 
 // Create a program that compares a parallel for loop and a standard for loop for summing rows of a View with Kokkos Timer.
-void printResults(const Kokkos::View<int*> rowSums, const double elapsedTime, const std::string& label) {
-  std::cout << label << ":\n";
-	
-  // Print row sums
-  //std::cout << "Row Sums:\n";
-  //for (int i = 0; i < rowSums.size(); ++i) {
-  //  std::cout << rowSums[i] << " ";
-  //}
-  //std::cout << std::endl;
-
-  // Print timing information
-  std::cout << "Time: "  << elapsedTime << " second\n\n";
+void printResults(const Kokkos::View<int*> rowSums) {
+  cout << "\nRow Sums:\n";
+  for (int i = 0; i < rowSums.size(); ++i) {
+    cout << rowSums[i] << " ";
+  }
+  cout << endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -26,9 +21,9 @@ int main(int argc, char* argv[]) {
 
   int n = 2000; // set number of rows
   int m = 5000; // set number of columns
-  std::cout << "View size: " << n << " x " << m << std::endl << std::endl;
+  cout << "View size: " << n << " x " << m << std::endl;
 
-  std::srand(std::time(0)); // set seed for random values
+  srand(time(0)); // set seed for random values
   
   // Make View and create values
   Kokkos::View<int**> myView("myView", n, m);
@@ -41,23 +36,24 @@ int main(int argc, char* argv[]) {
   // Print out the 2D matrix (for testing purposes)
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < m; ++j) {
-      //std::cout << std::setw(3) << myView(i, j) << " ";
+      //cout << setw(3) << myView(i, j) << " ";
     }
-    //std::cout << "\n\n";
+    //cout << "\n\n";
   }
   Kokkos::Timer std_timer;
-Kokkos::View<int*> std_rowSums("std_RowSums", n);
+  Kokkos::View<int*> std_rowSums("std_RowSums", n);
 
-for (int i = 0; i < n; i++) {
-  int rowSum = 0;
-  for (int j = 0; j < m; j++) {
-    rowSum += myView(i, j);
+  for (int i = 0; i < n; i++) {
+    int rowSum = 0;
+    for (int j = 0; j < m; j++) {
+      rowSum += myView(i, j);
+    }
+    std_rowSums(i) = rowSum;
   }
-  std_rowSums(i) = rowSum;
-}
 
-double std_totalTime = std_timer.seconds();
-printResults(std_rowSums, std_totalTime, "Serial"); // print serial results
+  double std_totalTime = std_timer.seconds();
+  cout << "\nSerial time: " << std_timer.seconds() << " seconds";
+  //printResults(std_rowSums);
 
   // Parallel for loop to sum rows
   Kokkos::Timer par_timer; 
@@ -72,11 +68,12 @@ printResults(std_rowSums, std_totalTime, "Serial"); // print serial results
   Kokkos::fence();
   double par_totalTime = par_timer.seconds();
 
-  printResults(par_rowSums, par_totalTime, "Parallel"); // print parallel results
+  cout << "\nParallel time: " << par_timer.seconds() << " seconds";
+  //printResults(par_rowSums);
 
   // Compare the total time
   double speedup = std_totalTime / par_totalTime;
-  std::cout << "The parallel loop is " << speedup << " times faster than the standard loop";
+  std::cout << "\nThe parallel loop is " << speedup << " times faster than the standard loop";
 
   // Assert both row sums are equal
   bool same = true;
@@ -86,9 +83,9 @@ printResults(std_rowSums, std_totalTime, "Serial"); // print serial results
     }
   }
   if (same == true){
-    std::cout << "\n\nBoth serial and parallel row sums are equivalent\n\n";
+    cout << "\nBoth serial and parallel row sums are equivalent\n\n";
   } else {
-    std::cout << "\n\nVALUE ERROR: Both serial and parallel row sums are NOT equivalent\n\n";
+    cout << "\nVALUE ERROR: Both serial and parallel row sums are NOT equivalent\n\n";
   }
 
   }
